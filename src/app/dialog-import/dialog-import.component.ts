@@ -3,18 +3,24 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import * as xml2js from 'xml2js';
 import * as Crypto from 'crypto-js';
+import { CurrentdateService } from '../currentdate.service';
+import { UntypedFormControl } from '@angular/forms';
 
 interface Importsource {
   value: string;
   viewValue: string;
+  viewImg: string;
 }
 
 @Component({
+  standalone: false,
+  //imports: [],
   selector: 'app-dialog-import',
   templateUrl: './dialog-import.component.html',
   styleUrls: ['./dialog-import.component.scss']
 })
 export class DialogImportComponent implements OnInit {
+
   selected = '';
   selected_source = '';
   csvContent: string;
@@ -43,24 +49,42 @@ export class DialogImportComponent implements OnInit {
   public nmapwrongpass = false;
   public jiraxmlshow_input = true;
   public jiraxmlplease_wait = false;
+  public decryptedjsonshow_input = true;
+  public decryptedjsonplease_wait = false;
+  public npmauditshow_input = true;
+  public npmauditplease_wait = false;
+  public semgrepshow_input = true;
+  public semgrepplease_wait = false;
+  mergeperpath = new UntypedFormControl();
+  public composershow_input = true;
+  public composerplease_wait = false;
+  public zaproxyshow_input = true;
+  public zaproxyplease_wait = false;
 
   file: any;
   hide = true;
   sour: Importsource[] = [
-    { value: 'vulnrepojson', viewValue: 'VULNRΞPO (.VULN)' },
-    { value: 'burp', viewValue: 'Burp Suite (.XML)' },
-    { value: 'bugcrowd', viewValue: 'Bugcrowd (.CSV)' },
-    { value: 'nmap', viewValue: 'Nmap (.XML)' },
-    { value: 'openvas', viewValue: 'OpenVAS 9 (.XML)' },
-    { value: 'nessus_xml', viewValue: 'Tenable Nessus (.NESSUS)' },
-    { value: 'nessus', viewValue: 'Tenable Nessus (.CSV)' },
-    { value: 'trivy', viewValue: 'Trivy (.JSON)' },
-    { value: 'jira_xml', viewValue: 'Jira (.XML)' }
+    { value: 'vulnrepojson', viewValue: 'VULNRΞPO (.VULN)', viewImg: '/favicon-32x32.png' },
+    { value: 'decrypted_json', viewValue: 'Decrypted Issue (.JSON)', viewImg: '/favicon-32x32.png' },
+    { value: 'burp', viewValue: 'Burp Suite (.XML)', viewImg: '/assets/vendors/burp-logo.png' },
+    { value: 'bugcrowd', viewValue: 'Bugcrowd (.CSV)', viewImg: '/assets/vendors/bugcrowd-logo.png' },
+    { value: 'nmap', viewValue: 'Nmap (.XML)', viewImg: '/assets/vendors/nmap-logo.png' },
+    { value: 'openvas', viewValue: 'OpenVAS 9 (.XML)', viewImg: '/assets/vendors/openvas-logo.png' },
+    { value: 'nessus_xml', viewValue: 'Tenable Nessus (.NESSUS)', viewImg: '/assets/vendors/nessus-logo.png' },
+    { value: 'nessus', viewValue: 'Tenable Nessus (.CSV)', viewImg: '/assets/vendors/nessus-logo.png' },
+    { value: 'trivy', viewValue: 'Trivy (.JSON)', viewImg: '/assets/vendors/trivy-logo.png' },
+    { value: 'jira_xml', viewValue: 'Atlassian Jira (.XML)', viewImg: '/assets/vendors/jira-logo.png' },
+    { value: 'npm_audit', viewValue: 'NPM-AUDIT (.JSON)', viewImg: '/assets/vendors/npm-logo.png' },
+    { value: 'semgrep', viewValue: 'Semgrep (.JSON)', viewImg: '/assets/vendors/semgrep-logo.png' },
+    { value: 'composer', viewValue: 'PHP COMPOSER AUDIT (.JSON)', viewImg: '/assets/vendors/Logo-composer-transparent.png' },
+    { value: 'zaproxy', viewValue: 'ZAP (.JSON)', viewImg: '/assets/vendors/zap-by-checkmarx.svg' }
   ];
 
-  constructor(public dialogRef: MatDialogRef<DialogImportComponent>, public datePipe: DatePipe) { }
+  constructor(public dialogRef: MatDialogRef<DialogImportComponent>, public datePipe: DatePipe,
+    private currentdateService: CurrentdateService) { }
 
   ngOnInit() {
+    this.mergeperpath.setValue(true);
   }
 
   onFileLoad(fileLoadedEvent) {
@@ -168,8 +192,6 @@ export class DialogImportComponent implements OnInit {
 
     const parsedCsv2 = group_issues(this.parsedCsv);
     const parsedCsv = unique(parsedCsv2, 0);
-    const date = new Date();
-    const today = this.datePipe.transform(date, 'yyyy-MM-dd');
     const info = parsedCsv.map((res, key) => {
 
       const def = {
@@ -180,10 +202,12 @@ export class DialogImportComponent implements OnInit {
         severity: res[3],
         ref: res[11],
         cvss: res[2],
+        cvss_vector: '',
         cve: res[1],
-        tags: [],
+        tags: [{ name: "nessus" }],
+        status: 1,
         bounty: [],
-        date: today
+        date: this.currentdateService.getcurrentDate()
       };
 
       return def;
@@ -211,15 +235,15 @@ export class DialogImportComponent implements OnInit {
   }
 
 
-  
+
   parsebugcrowd(csv) {
-    
+
     const csvData = csv || '';
     let m: any;
     const issuelist = [];
     let text = csvData.substring(csvData.indexOf("\n") + 1);
-    text = text.replace(/, /g,'. ');
-    
+    text = text.replace(/, /g, '. ');
+
 
     function setseverity(severity: string) {
 
@@ -241,28 +265,28 @@ export class DialogImportComponent implements OnInit {
 
     const regex = /(.*),(.*),(.*),(.*),(.*),(.*),([\S\s]*?),([\S\s]*?),(.*),(.*),(.*),(.*),(.*)/gm;
     while ((m = regex.exec(text)) !== null) {
-        // This is necessary to avoid infinite loops with zero-width matches
-        if (m.index === regex.lastIndex) {
-            regex.lastIndex++;
-        }
-        
-        const date = new Date();
-        const today = this.datePipe.transform(date, 'yyyy-MM-dd');
-        const def = {
-          title: m[4],
-          poc: m[6] + "\n\n" + m[8],
-          files: [],
-          desc: m[7],
-          severity: setseverity(m[11]),
-          ref: 'https://bugcrowd.com/vulnerability-rating-taxonomy',
-          cvss: '',
-          cve: '',
-          tags: [{name: 'bugcrowd'}],
-          bounty: [],
-          date: today
-        };
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (m.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
 
-        issuelist.push(def);
+      const def = {
+        title: m[4],
+        poc: m[6] + "\n\n" + m[8],
+        files: [],
+        desc: m[7],
+        severity: setseverity(m[11]),
+        ref: 'https://bugcrowd.com/vulnerability-rating-taxonomy',
+        cvss: '',
+        cvss_vector: '',
+        cve: '',
+        tags: [{ name: 'bugcrowd' }],
+        status: 1,
+        bounty: [],
+        date: this.currentdateService.getcurrentDate()
+      };
+
+      issuelist.push(def);
 
     }
     this.dialogRef.close(issuelist);
@@ -297,11 +321,10 @@ export class DialogImportComponent implements OnInit {
     }
 
 
-    function stripHtml(html)
-    {
-       let tmp = document.createElement("DIV");
-       tmp.innerHTML = html;
-       return tmp.textContent || tmp.innerText || "";
+    function stripHtml(html) {
+      let tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
     }
 
     function setcvss(severity) {
@@ -328,13 +351,12 @@ export class DialogImportComponent implements OnInit {
 
 
     const emp = [];
-
     this.xmltojson.map((res, key) => {
 
-      if (!emp.find(x => x.type[0] === res.type[0])) {
+      if (!emp.find(x => x.serialNumber[0] === res.serialNumber[0])) {
         emp.push(res);
       } else {
-        const index = emp.findIndex(x => x.type[0] === res.type[0]);
+        const index = emp.findIndex(x => x.serialNumber[0] === res.serialNumber[0]);
 
         emp[index].location.push(res.location[0]);
         emp[index].path.push(res.path[0]);
@@ -345,8 +367,6 @@ export class DialogImportComponent implements OnInit {
 
     });
 
-    const date = new Date();
-    const today = this.datePipe.transform(date, 'yyyy-MM-dd');
     const info = emp.map((res, key) => {
 
       let item = '';
@@ -370,22 +390,32 @@ export class DialogImportComponent implements OnInit {
         itemrem = '';
       }
 
+
+      let itemback = '';
+      if (res.issueBackground !== undefined) {
+        itemback = stripHtml(res.issueBackground[0]);
+      } else {
+        itemback = '';
+      }
+
       if (res.severity[0] === 'Information') {
         res.severity[0] = 'Info';
       }
 
       const def = {
         title: res.name[0],
-        poc: itempoc + '\n\n' + returnhost(res.host, res.path),
+        poc: returnhost(res.host, res.path),
         files: [],
-        desc: stripHtml(res.issueBackground[0]) + '\n\n' + itemrem,
+        desc: itempoc + '\n\n' + itemback + '\n\n' + itemrem,
         severity: res.severity[0],
         ref: item,
         cvss: setcvss(res.severity[0]),
+        cvss_vector: '',
         cve: '',
-        tags: [],
+        tags: [{ name: "burp" }],
+        status: 1,
         bounty: [],
-        date: today
+        date: this.currentdateService.getcurrentDate()
       };
 
       return def;
@@ -440,23 +470,21 @@ export class DialogImportComponent implements OnInit {
 
   parseOpenvasxml(xml) {
 
-function isarr(arr) {
-  return Array.isArray(arr)
-}
+    function isarr(arr) {
+      return Array.isArray(arr)
+    }
 
-    const date = new Date();
-    const today = this.datePipe.transform(date, 'yyyy-MM-dd');
     const info = xml.map((res, key) => {
       let zref = "";
-      if(res.nvt[0].xref || res.nvt[0].refs) {
+      if (res.nvt[0].xref || res.nvt[0].refs) {
 
         let references = res.nvt[0].xref ?? res.nvt[0].refs[0].ref;
         references.forEach(function (value) {
-          if(value.$.id) {
-            zref = zref + value.$.id +"\n"
+          if (value.$.id) {
+            zref = zref + value.$.id + "\n"
           }
-          
-        }); 
+
+        });
 
       }
 
@@ -491,10 +519,12 @@ function isarr(arr) {
         severity: res.threat[0],
         ref: zref,
         cvss: res.severity[0],
+        cvss_vector: '',
         cve: '',
-        tags: [],
+        tags: [{ name: "openvas" }],
+        status: 1,
         bounty: [],
-        date: today
+        date: this.currentdateService.getcurrentDate()
       };
 
       return def;
@@ -529,11 +559,11 @@ function isarr(arr) {
 
     function getSafe(fn, defaultVal) {
       try {
-          return fn();
+        return fn();
       } catch (e) {
-          return defaultVal;
+        return defaultVal;
       }
-  }
+    }
 
     this.xmltojson = [];
     const issues = [];
@@ -549,12 +579,12 @@ function isarr(arr) {
 
           myarrdeep.ReportItem.forEach((itemissue) => {
 
+            // tslint:disable-next-line:max-line-length
+            type MyArrayType = Array<{ ip: string, port: string, protocol: string, hostfqdn: string, hostname: string, pluginout: string }>;
+            const arr: MyArrayType = [
               // tslint:disable-next-line:max-line-length
-              type MyArrayType = Array<{ ip: string, port: string, protocol: string, hostfqdn: string, hostname: string, pluginout: string }>;
-              const arr: MyArrayType = [
-                // tslint:disable-next-line:max-line-length
-                { ip: myarrdeep.$.name, port: itemissue.$.port, protocol: itemissue.$.protocol, hostfqdn: getSafe(() => myarrdeep.HostProperties[0].tag[2]._, ''), hostname: getSafe(() => myarrdeep.HostProperties[0].tag[14]._, ''), pluginout: itemissue.plugin_output }
-              ];
+              { ip: myarrdeep.$.name, port: itemissue.$.port, protocol: itemissue.$.protocol, hostfqdn: getSafe(() => myarrdeep.HostProperties[0].tag[2]._, ''), hostname: getSafe(() => myarrdeep.HostProperties[0].tag[14]._, ''), pluginout: itemissue.plugin_output }
+            ];
 
             if (myarrdeep.HostProperties[0].tag[2]._) {
 
@@ -580,8 +610,6 @@ function isarr(arr) {
 
     });
 
-    const date = new Date();
-    const today = this.datePipe.transform(date, 'yyyy-MM-dd');
     const info = uniq_items.map((res, key) => {
 
       if (res[8].toString() === 'Information') {
@@ -628,7 +656,7 @@ function isarr(arr) {
       });
 
 
-      let out_ip = '\nOutput:\n';
+      let out_ip = 'Output:\n\n';
       res[2].forEach((myObject, index) => {
 
         if (myObject.ip !== undefined) {
@@ -680,16 +708,18 @@ function isarr(arr) {
 
       const def = {
         title: res[0],
-        poc: out_hosts + out_ip,
+        poc: out_hosts + "\n\n" + out_ip,
         files: [],
         desc: res[5],
         severity: res[8].toString(),
         ref: res[7],
         cvss: res[3],
+        cvss_vector: '',
         cve: '',
-        tags: [],
+        tags: [{ name: "nessus" }],
+        status: 1,
         bounty: [],
-        date: today
+        date: this.currentdateService.getcurrentDate()
       };
 
       return def;
@@ -718,19 +748,19 @@ function isarr(arr) {
 
   vulnrepojson(json, pass) {
 
-      try {
-        // Decrypt
-        const bytes = Crypto.AES.decrypt(json.toString(), pass);
-        const decryptedData = JSON.parse(bytes.toString(Crypto.enc.Utf8));
+    try {
+      // Decrypt
+      const bytes = Crypto.AES.decrypt(json.toString(), pass);
+      const decryptedData = JSON.parse(bytes.toString(Crypto.enc.Utf8));
 
-        if (decryptedData) {
-          this.dialogRef.close(decryptedData);
-        }
-
-      } catch (except) {
-        this.vulnrepojsonplease_wait = false;
-        this.vulnrepowrongpass = true;
+      if (decryptedData) {
+        this.dialogRef.close(decryptedData);
       }
+
+    } catch (except) {
+      this.vulnrepojsonplease_wait = false;
+      this.vulnrepowrongpass = true;
+    }
 
   }
 
@@ -766,17 +796,15 @@ function isarr(arr) {
       json = result.nmaprun;
       hosts = result.nmaprun.host;
     });
-    
+
     // only state up ip's
-    if(this.checked) {
+    if (this.checked) {
       const getUp = hosts.filter(function (el) {
         return (el.status[0]['$'].state === 'up');
       });
-      hosts=getUp;
+      hosts = getUp;
     }
 
-    const date = new Date();
-    const today = this.datePipe.transform(date, 'yyyy-MM-dd');
     const info = hosts.map((res, key) => {
       let addre = '';
       if (res.address[0]['$'].addr !== undefined) {
@@ -786,8 +814,8 @@ function isarr(arr) {
       }
 
       let hostt = '';
-      if(res.hostnames) {
-        if(res.hostnames[0].hostname) {
+      if (res.hostnames) {
+        if (res.hostnames[0].hostname) {
           if (res.hostnames[0].hostname[0]['$'].name !== undefined) {
             hostt = ' - ' + res.hostnames[0].hostname[0]['$'].name;
           } else {
@@ -830,12 +858,12 @@ function isarr(arr) {
             } else {
               service = service_name + ' - ' + service_product;
             }
-            
+
             ports = ports + myObject['$'].protocol + '/' + myObject['$'].portid + ' - ' + service + '\n';
           });
-  
+
         }
-      
+
         if (res.ports[0].extraports !== undefined) {
           const title = '\nFiltered ports:\n';
           res.ports[0].extraports.forEach((myObject, index) => {
@@ -843,7 +871,7 @@ function isarr(arr) {
           });
           filteredports = title + filteredports;
         }
-    }
+      }
 
       let osdetect = '';
       if (res.os) {
@@ -867,10 +895,12 @@ function isarr(arr) {
         severity: 'Info',
         ref: 'https://nmap.org/',
         cvss: '',
+        cvss_vector: '',
         cve: '',
-        tags: [],
+        tags: [{ name: "nmap" }],
+        status: 1,
         bounty: [],
-        date: today
+        date: this.currentdateService.getcurrentDate()
       };
 
       return def;
@@ -903,7 +933,7 @@ function isarr(arr) {
   }
 
   trivyparse(json) {
-    
+
     const data = JSON.parse(json);
     const issuelist = [];
 
@@ -934,18 +964,16 @@ function isarr(arr) {
         if (Object.values(intvulns).indexOf(myObject2.VulnerabilityID) > -1) {
           // console.log('has VulnerabilityID');
         } else {
-          const reff = myObject2.References.join("\n"); 
+          const reff = myObject2.References.join("\n");
           let cvss = '';
 
           if (typeof myObject2.CVSS !== 'undefined') {
             if (typeof myObject2.CVSS.nvd !== 'undefined') {
               cvss = myObject2.CVSS.nvd.V3Score;
             }
-  
+
           }
 
-          const date = new Date();
-          const today = this.datePipe.transform(date, 'yyyy-MM-dd');
           const def = {
             title: myObject2.Title,
             poc: 'Target: ' + myObject.Target + '\nClass: ' + myObject.Class + '\nType: ' + myObject.Type + '\nPkgID: ' + myObject2.PkgID + '\nPkgName: ' + myObject2.PkgName + '\nInstalled Version: ' + myObject2.InstalledVersion + '\nFixed Version: ' + myObject2.FixedVersion + '\n',
@@ -954,18 +982,20 @@ function isarr(arr) {
             severity: setseverity(myObject2.Severity),
             ref: reff,
             cvss: cvss,
+            cvss_vector: '',
             cve: '',
-            tags: [],
+            tags: [{ name: "trivy" }],
+            status: 1,
             bounty: [],
-            date: today
+            date: this.currentdateService.getcurrentDate()
           };
-  
+
           intvulns.push(myObject2.VulnerabilityID);
           issuelist.push(def);
         }
-        
+
       });
-      
+
     });
 
 
@@ -1003,9 +1033,6 @@ function isarr(arr) {
     parser.parseString(xml, (err, result) => {
       xmltojson = result.rss.channel[0].item;
     });
-
-    const date = new Date();
-    const today = this.datePipe.transform(date, 'yyyy-MM-dd');
 
     const info = xmltojson.map((res, key) => {
 
@@ -1071,16 +1098,433 @@ function isarr(arr) {
         severity: res.priority[0]._,
         ref: div3.innerText + '\n' + res.link[0],
         cvss: '',
+        cvss_vector: '',
         cve: '',
-        tags: [],
+        tags: [{ name: "jira" }],
+        status: 1,
         bounty: [],
-        date: today
+        date: this.currentdateService.getcurrentDate()
       };
 
       return def;
     });
 
     this.dialogRef.close(info);
+
+  }
+
+
+  decryptedjsononFileSelect(input: HTMLInputElement) {
+
+    const files = input.files;
+    if (files && files.length) {
+      this.decryptedjsonshow_input = false;
+      this.decryptedjsonplease_wait = true;
+
+      const fileToRead = files[0];
+
+      const fileReader = new FileReader();
+      fileReader.onload = this.onFileLoad;
+
+      fileReader.onload = (e) => {
+        this.parsedecryptedJSON(fileReader.result);
+      };
+
+      fileReader.readAsText(fileToRead, 'UTF-8');
+    }
+
+  }
+
+  parsedecryptedJSON(json) {
+    const data = JSON.parse(json);
+    if (data) {
+      this.dialogRef.close(data);
+    }
+
+  }
+
+
+  npmauditjsononFileSelect(input: HTMLInputElement) {
+
+    const files = input.files;
+    if (files && files.length) {
+      this.npmauditshow_input = false;
+      this.npmauditplease_wait = true;
+
+      const fileToRead = files[0];
+
+      const fileReader = new FileReader();
+      fileReader.onload = this.onFileLoad;
+
+      fileReader.onload = (e) => {
+        this.parsenpmauditJSON(fileReader.result);
+      };
+
+      fileReader.readAsText(fileToRead, 'UTF-8');
+    }
+
+  }
+
+  parsenpmauditJSON(json) {
+    const data = JSON.parse(json);
+    if (data.vulnerabilities) {
+
+      function setseverity(severity) {
+
+        if (severity === 'moderate') {
+          severity = 'Medium';
+        }
+
+        let result = severity.charAt(0).toUpperCase() + severity.slice(1);
+
+        return result
+      }
+
+      const arr = [];
+      for (const [key, value] of Object.entries(data.vulnerabilities)) {
+
+        value["via"].forEach((item, index) => {
+
+          const def = {
+            title: item.name + ' ' + item.range + ' ' + item.title,
+            poc: 'Result of execution command: $ npm audit --json',
+            files: [],
+            desc: 'Full description on: ' + item.url,
+            severity: setseverity(item.severity),
+            ref: item.url,
+            cvss: '',
+            cvss_vector: '',
+            cve: '',
+            tags: [{ name: "npm-audit" }],
+            status: 1,
+            bounty: [],
+            date: this.currentdateService.getcurrentDate()
+          };
+
+          arr.push(def);
+        });
+
+      }
+
+      this.dialogRef.close(arr);
+    }
+  }
+
+
+  semgreponFileSelect(input: HTMLInputElement) {
+
+    const files = input.files;
+    if (files && files.length) {
+      this.npmauditshow_input = false;
+      this.npmauditplease_wait = true;
+
+      const fileToRead = files[0];
+
+      const fileReader = new FileReader();
+      fileReader.onload = this.onFileLoad;
+
+      fileReader.onload = (e) => {
+        this.parseSemgrep(fileReader.result);
+      };
+
+      fileReader.readAsText(fileToRead, 'UTF-8');
+    }
+
+  }
+
+
+  parseSemgrep(json) {
+
+
+    function setseverity(severity) {
+      if (severity === 'HIGH') {
+        severity = 'High';
+      } else if (severity === 'MEDIUM') {
+        severity = 'Medium';
+      } else if (severity === 'LOW') {
+        severity = 'Low';
+      }
+      return severity
+    }
+
+    function gethigherseverity(array) {
+
+      let severityret = '';
+
+      if (array.includes('HIGH')) {
+        severityret = 'High';
+      } else if (array.includes('MEDIUM')) {
+        severityret = 'Medium';
+      } else if (array.includes('LOW')) {
+        severityret = 'Low';
+      }
+
+      return severityret
+    }
+
+    const data = JSON.parse(json);
+
+    if (this.mergeperpath.value) {
+      const groupBy = (x, f) => x.reduce((a, b, i) => ((a[f(b, i, x)] ||= []).push(b), a), {});
+      const grouped = groupBy(data.results, v => v.path);
+      const arr = [];
+      for (const [key, value] of Object.entries(grouped)) {
+
+        const ref = [];
+        const poc = [];
+        const desc = [];
+        const severity = [];
+        const vuln_class = [];
+        for (const [subkey, subvalue] of Object.entries(value)) {
+
+
+          if (!ref.includes(subvalue["extra"]["metadata"]["source"])) {
+            ref.push(subvalue["extra"]["metadata"]["source"]);
+          }
+
+          if (!poc.includes(subvalue["path"] + ":" + subvalue["start"]["line"] + "\n\n`" + subvalue["extra"]["lines"] + "`")) {
+            poc.push(subvalue["path"] + ":" + subvalue["start"]["line"] + "\n\n`" + subvalue["extra"]["lines"].replaceAll("`", "'") + "`");
+          }
+
+          if (!desc.includes(subvalue["extra"]["message"])) {
+            desc.push(subvalue["extra"]["message"]);
+          }
+
+          if (!severity.includes(subvalue["extra"]["metadata"]["impact"])) {
+            severity.push(subvalue["extra"]["metadata"]["impact"]);
+          }
+
+          if (!vuln_class.includes(subvalue["extra"]["metadata"]["vulnerability_class"].join(", "))) {
+            vuln_class.push(subvalue["extra"]["metadata"]["vulnerability_class"].join(", "));
+          }
+
+        }
+
+
+        const def = {
+          title: 'File: ' + key + ' ' + vuln_class.join(", "),
+          poc: poc.join("\n\n"),
+          files: [],
+          desc: desc.join("\n\n"),
+          severity: gethigherseverity(severity),
+          ref: ref.join("\n"),
+          status: 1,
+          cvss: '',
+          cvss_vector: '',
+          cve: '',
+          tags: [{ name: "semgrep" }],
+          bounty: [],
+          date: this.currentdateService.getcurrentDate()
+        };
+
+        arr.push(def);
+
+      }
+
+      this.dialogRef.close(arr);
+
+
+    } else {
+
+      const arr = [];
+
+      for (const [key, value] of Object.entries(data.results)) {
+
+        const def = {
+          title: value["check_id"],
+          poc: value["path"] + ":" + value["start"]["line"] + "\n\n`" + value["extra"]["lines"] + "`",
+          files: [],
+          desc: value["extra"]["message"],
+          severity: setseverity(value["extra"]["metadata"]["impact"]),
+          ref: value["extra"]["metadata"]["source"],
+          status: 1,
+          cvss: '',
+          cvss_vector: '',
+          cve: '',
+          tags: [{ name: "semgrep" }],
+          bounty: [],
+          date: this.currentdateService.getcurrentDate()
+        };
+
+        arr.push(def);
+
+      }
+
+
+      this.dialogRef.close(arr);
+
+
+    }
+
+
+
+  }
+
+  composeronFileSelect(input: HTMLInputElement) {
+
+    const files = input.files;
+    if (files && files.length) {
+      this.npmauditshow_input = false;
+      this.npmauditplease_wait = true;
+
+      const fileToRead = files[0];
+
+      const fileReader = new FileReader();
+      fileReader.onload = this.onFileLoad;
+
+      fileReader.onload = (e) => {
+        this.parseComposer(fileReader.result);
+      };
+
+      fileReader.readAsText(fileToRead, 'UTF-8');
+    }
+
+  }
+
+
+  parseComposer(json) {
+    const data = JSON.parse(json);
+
+    function setseverity(severity) {
+      if (severity === 'critical') {
+        severity = 'Critical';
+      } else if (severity === 'high') {
+        severity = 'High';
+      } else if (severity === 'medium') {
+        severity = 'Medium';
+      } else if (severity === 'low') {
+        severity = 'Low';
+      } else if (severity === 'none') {
+        severity = 'Info';
+      }
+      return severity
+    }
+
+    const arr = [];
+    for (const [key, value] of Object.entries(data.advisories)) {
+
+      for (const [subkey, subvalue] of Object.entries(value)) {
+
+        const def = {
+          title: subvalue.title,
+          poc: 'Package Name: ' + subvalue.packageName + '\nAffected Versions: ' + subvalue.affectedVersions,
+          files: [],
+          desc: 'All details information: ' + subvalue.link,
+          severity: setseverity(subvalue.severity),
+          ref: subvalue.link,
+          status: 1,
+          cvss: '',
+          cvss_vector: '',
+          cve: subvalue.cve,
+          tags: [{ name: "composer" }],
+          bounty: [],
+          date: this.currentdateService.getcurrentDate()
+        };
+
+        arr.push(def);
+
+      }
+
+    }
+
+    this.dialogRef.close(arr);
+
+  }
+
+
+  zaproxyonFileSelect(input: HTMLInputElement) {
+
+    const files = input.files;
+    if (files && files.length) {
+      this.zaproxyshow_input = false;
+      this.zaproxyplease_wait = true;
+
+      const fileToRead = files[0];
+
+      const fileReader = new FileReader();
+      fileReader.onload = this.onFileLoad;
+
+      fileReader.onload = (e) => {
+        this.parsezaproxy(fileReader.result);
+      };
+
+      fileReader.readAsText(fileToRead, 'UTF-8');
+    }
+
+  }
+
+  parsezaproxy(json) {
+    const data = JSON.parse(json);
+
+    function setseverity(severity) {
+      if (severity === '4') {
+        severity = 'Critical';
+      } else if (severity === '3') {
+        severity = 'High';
+      } else if (severity === '2') {
+        severity = 'Medium';
+      } else if (severity === '1') {
+        severity = 'Low';
+      } else if (severity === '0') {
+        severity = 'Info';
+      }
+      return severity
+    }
+
+    function parseit(text) {
+      var html = text;
+      var div = document.createElement("div");
+      div.innerHTML = html;
+      text = div.textContent || div.innerText || "";
+      return text
+    }
+    function parseref(text) {
+
+      text = text.replaceAll('</p><p>', '</p>\n<p>')
+      var html = text;
+      var div = document.createElement("div");
+      div.innerHTML = html;
+      text = div.textContent || div.innerText || "";
+      return text
+    }
+    const arr = [];
+    for (const [key, value] of Object.entries(data.site)) {
+
+      for (const [subkey, subvalue] of Object.entries(value['alerts'])) {
+
+
+        let scopedesc = "";
+        if (subvalue['instances']) {
+          scopedesc = "Request header:\n" + subvalue['instances'][0]['method'] + " " + subvalue['instances'][0]['uri'];
+        }
+
+
+
+
+
+        const def = {
+          title: subvalue['alert'],
+          poc: scopedesc,
+          files: [],
+          desc: parseit(subvalue['desc']) + "\n\n" + parseit(subvalue['otherinfo']),
+          severity: setseverity(subvalue['riskcode']),
+          ref: parseref(subvalue['reference']),
+          status: 1,
+          cvss: '',
+          cvss_vector: '',
+          cve: '',
+          tags: [{ name: "zaproxy" }],
+          bounty: [],
+          date: this.currentdateService.getcurrentDate()
+        };
+
+        arr.push(def);
+
+      }
+
+    }
+
+    this.dialogRef.close(arr);
 
   }
 

@@ -2,7 +2,15 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as Crypto from 'crypto-js';
 
+interface Exportsource {
+  value: string;
+  viewValue: string;
+  viewImg: string;
+}
+
 @Component({
+  standalone: false,
+  //imports: [],
   selector: 'app-dialog-exportissues',
   templateUrl: './dialog-exportissues.component.html',
   styleUrls: ['./dialog-exportissues.component.scss']
@@ -16,9 +24,9 @@ export class DialogExportissuesComponent implements OnInit {
   multipartcurl = false;
   multicurlcmd = '';
   curlcmd = '';
+  selected_export = 'vulnrepojson';
   hide = true;
-  fields_prop = `
-  "project": {
+  fields_prop = `"project": {
     "key": "$key"
   },
   "summary": "$title",
@@ -33,17 +41,30 @@ export class DialogExportissuesComponent implements OnInit {
     "$label"
   ]`;
 
+  sour: Exportsource[] = [
+    { value: 'vulnrepojson', viewValue: 'VULNRΞPO (.VULN)', viewImg: '/favicon-32x32.png' },
+    { value: 'decrypted_json', viewValue: 'Decrypted Issue (.JSON)', viewImg: '/favicon-32x32.png' },
+    { value: 'jira', viewValue: 'Atlassian Jira', viewImg: '/assets/vendors/jira-logo.png' }
+  ];
+
   constructor(public dialogRef: MatDialogRef<DialogExportissuesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
     ngOnInit() {
 
       if (this.data.sel) {
+
         this.data.sel.forEach((item, index) => {
-          if (item === true) {
-            this.isReturn.push(this.data.orig[index]);
+          if (item.data) {
+            
+            const index2: number = this.data.orig.findIndex(i => i === item.data)
+            if (index2 !== -1) {
+              this.isReturn.push(this.data.orig[index2]);
+            }
+
           }
       });
+
       } else {
           this.isReturn = this.data;
       }
@@ -228,8 +249,7 @@ done`;
     ]
   }`;
 
-this.curlcmd = `
-curl \
+this.curlcmd = `curl \
 -D- \
 -u ` + jira_c_email + ` \
 -X POST \
@@ -246,23 +266,31 @@ curl \
   vulnrepojsonexport(pass, pass2) {
 
     if (pass === pass2) {
+
+      if (this.isReturn.length > 0) {
+        this.data = this.isReturn;
+      }
+
       const json = JSON.stringify(this.data);
       // Encrypt
       const ciphertext = Crypto.AES.encrypt(json, pass);
 
       const element = document.createElement('a');
       element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(ciphertext));
-      element.setAttribute('download', 'Vulnrepo issues export.vuln');
+      element.setAttribute('download', 'VULNREPO issues export.vuln');
       element.style.display = 'none';
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
     }
 
-
   }
 
   splitfile(event) {
+
+    this.curlhide = false;
+    this.multipartcurl = false;
+
     if (event.checked === false) {
       this.splitfilereport = false;
     }
@@ -271,5 +299,23 @@ curl \
     }
   }
 
+
+  downloaddecryptedJSON() {
+
+      if (this.isReturn.length > 0) {
+        this.data = this.isReturn;
+      }
+
+      const json = JSON.stringify(this.data);
+
+      const element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(json));
+      element.setAttribute('download', 'VULNREPO issues export.json');
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+
+  }
 
 }

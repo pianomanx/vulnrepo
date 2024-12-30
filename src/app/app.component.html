@@ -4,14 +4,16 @@
       <mat-icon>menu</mat-icon>
     </button>
     <span style="display: contents;">
-      <img style="margin-right: 5px;" width="35px" src="assets/logo/vulnrepo_logo.png"> <span style="color:white">VULNRΞPO</span>&nbsp;<small>v.β <small *ngIf="app_ver != ''"><span style="text-decoration: underline;text-decoration-color: #69f0ae"><a title="Version Rev ID: {{app_ver}}" target="_blank" style="font-size: smaller; color: rgba(255, 255, 255, 0.7);" href="https://github.com/kac89/vulnrepo/commit/{{app_ver}}">#{{app_ver_short}}</a></span></small></small>
+      <img style="margin-right: 15px;" width="35px" src="assets/logo/vulnrepo_logo.png"> 
+      
+      <span class="neon flash">VULNRΞPO<span>VULNRΞPO</span></span>
     </span>
     <div *ngIf="show_status" class="title-center">
 
       <div *ngIf="enc_status">
-        <mat-icon class="vertical-align-middle padding-bottom-3 decrypted-color" matSuffix>no_encryption</mat-icon> Report is decrypted.
+        <mat-icon class="vertical-align-middle padding-bottom-3 decrypted-color" matSuffix>no_encryption</mat-icon> Report is decrypted
       </div>
-      <div *ngIf="!enc_status"><mat-icon class="vertical-align-middle padding-bottom-3 encrypted-color" matSuffix>lock</mat-icon> Report is encrypted.</div>
+      <div *ngIf="!enc_status"><mat-icon class="vertical-align-middle padding-bottom-3 encrypted-color" matSuffix>lock</mat-icon> Report is encrypted</div>
 
     </div>
     
@@ -33,33 +35,81 @@
       </button>
       <mat-menu #menu="matMenu">
 
-        <a routerLink="/new-report" routerLinkActive="mdc-list-item--selected" href="/new-report" mat-menu-item>
+        <a routerLink="/new-report" routerLinkActive="active-link" href="/new-report" mat-menu-item>
           <mat-icon class="vertical-align-middle padding-bottom-3">add_circle_outline</mat-icon> Create new report
         </a>
 
-        <a routerLink="/import-report" routerLinkActive="mdc-list-item--selected" href="/import-report" mat-menu-item>
+        <a routerLink="/import-report" routerLinkActive="active-link" href="/import-report" mat-menu-item>
           <mat-icon class="vertical-align-middle padding-bottom-3">playlist_add</mat-icon> Import report
         </a>
 
-        <a routerLink="/templates-list" routerLinkActive="mdc-list-item--selected" href="/templates-list" mat-menu-item>
+        <a routerLink="/templates-list" routerLinkActive="active-link" href="/templates-list" mat-menu-item>
           <mat-icon class="vertical-align-middle padding-bottom-3">bug_report</mat-icon>
           Templates List
         </a>
-        <a routerLink="/settings" routerLinkActive="mdc-list-item--selected" href="/settings" mat-menu-item>
+
+        <a routerLinkActive="active-link" mat-menu-item [matMenuTriggerFor]="methods">
+          <mat-icon class="vertical-align-middle padding-bottom-3">library_books</mat-icon>
+          Methodology
+        </a>
+        <a routerLink="/cve-search" routerLinkActive="active-link" href="/cve-search" mat-menu-item>
+          <mat-icon class="vertical-align-middle padding-bottom-3">search</mat-icon>
+          CVE Search
+        </a>
+        <a routerLink="/settings" routerLinkActive="active-link" href="/settings" mat-menu-item>
           <mat-icon class="vertical-align-middle padding-bottom-3">settings</mat-icon>
           Settings
         </a>
-        <a routerLink="/faq" routerLinkActive="mdc-list-item--selected" href="/faq" mat-menu-item>
-          <mat-icon class="vertical-align-middle padding-bottom-3">info</mat-icon>
+        <a routerLink="/faq" routerLinkActive="active-link" href="/faq" mat-menu-item>
+          <mat-icon class="vertical-align-middle padding-bottom-3">live_help
+          </mat-icon>
           FAQ
         </a>
+
+        <button mat-menu-item (click)="goAbout()"><mat-icon class="vertical-align-middle padding-bottom-3">info</mat-icon> About</button>
+
+        <div *ngIf="show_active_reports">
+
+          <button mat-menu-item disabled>
+            <mat-icon>remove</mat-icon>
+          </button>
+
+          <button mat-menu-item disabled>
+            <mat-icon>lock_open</mat-icon>
+            <span>Active open reports</span>
+          </button>
+
+          <span *ngFor="let activreport of arr_oreports">
+            <a [routerLink]="['/report', activreport.report_id]" routerLinkActive="active-link" mat-menu-item>
+              <mat-icon class="vertical-align-middle padding-bottom-3">lock_open</mat-icon><mat-icon color="accent" *ngIf="activreport.report_source == 'api'" class="vertical-align-middle padding-bottom-3">public</mat-icon> {{activreport.report_name}}
+            </a>
+
+          </span>
+
+        </div>
+
       </mat-menu>
 
-      <a target="_blank" fxLayoutAlign="center start" href="https://github.com/kac89/vulnrepo" style="padding: 0px;" title="Visit project on github.com" mat-button>
+      <mat-menu #methods="matMenu" xPosition="after" yPosition="above">
+        <a routerLink="/asvs4" routerLinkActive="active-link" href="/asvs4" mat-menu-item>
+          <mat-icon class="vertical-align-middle padding-bottom-3">description</mat-icon>
+          ASVS 4.0.3
+        </a>
+        <a routerLink="/pcidss4" routerLinkActive="active-link" href="/pcidss4" mat-menu-item>
+          <mat-icon class="vertical-align-middle padding-bottom-3">description</mat-icon>
+          PCI DSS v4.0 Auditor
+        </a>
+        <a routerLink="/tbhm" routerLinkActive="active-link" href="/tbhm" mat-menu-item>
+          <mat-icon class="vertical-align-middle padding-bottom-3">description</mat-icon>
+          TBHM - Fast Testing Checklist
+        </a>
+      </mat-menu>
+      <br>
+      <a target="_blank" fxLayoutAlign="center start" href="https://github.com/kac89/vulnrepo" style="padding-left: 10px;" title="Visit project on github.com" >
         <img src="./assets/github.png" style="height: 32px;width: 32px;">
       </a>
 
-      <a target="_blank"  href="https://x.com/vulnrepo" title="Follow project on X" style="padding: 0px;padding-top: 10px;" mat-button>
+      <a target="_blank"  href="https://x.com/vulnrepo" title="Follow project on X" style="padding: 0px;padding-top: 10px;">
         <img src="./assets/X.svg" style="width: 64px;">
       </a>
 
@@ -70,33 +120,42 @@
 <mat-sidenav-container fxFlexFill>
   <mat-sidenav #sidenav>
     <mat-nav-list>
-      <a routerLink="/home" routerLinkActive="mdc-list-item--selected" href="/home" mat-list-item>
+      <a routerLink="/home" routerLinkActive="active-link" href="/home" mat-menu-item>
         <mat-icon class="vertical-align-middle padding-bottom-3">home</mat-icon>
         Home
       </a>
-      <a routerLink="/my-reports" routerLinkActive="mdc-list-item--selected" href="/my-reports" mat-list-item>
+      <a routerLink="/my-reports" routerLinkActive="active-link" href="/my-reports" mat-menu-item>
         <mat-icon class="vertical-align-middle padding-bottom-3">list_alt</mat-icon>
         My Reports
       </a>
-      <a routerLink="/new-report" routerLinkActive="mdc-list-item--selected" href="/new-report" mat-list-item>
+      <a routerLink="/new-report" routerLinkActive="active-link" href="/new-report" mat-menu-item>
         <mat-icon class="vertical-align-middle padding-bottom-3">add_circle_outline</mat-icon> Create new report
       </a>
-      <a routerLink="/import-report" routerLinkActive="mdc-list-item--selected" href="/import-report" mat-list-item>
+      <a routerLink="/import-report" routerLinkActive="active-link" href="/import-report" mat-menu-item>
         <mat-icon class="vertical-align-middle padding-bottom-3">playlist_add</mat-icon> Import report
       </a>
-      <a routerLink="/templates-list" routerLinkActive="mdc-list-item--selected" href="/templates-list" mat-list-item>
+      <a routerLink="/templates-list" routerLinkActive="active-link" href="/templates-list" mat-menu-item>
         <mat-icon class="vertical-align-middle padding-bottom-3">bug_report</mat-icon>
         Templates List
       </a>
-      <a routerLink="/settings" routerLinkActive="mdc-list-item--selected" href="/settings" mat-list-item>
+      <a routerLinkActive="active-link" mat-menu-item [matMenuTriggerFor]="methods">
+        <mat-icon class="vertical-align-middle padding-bottom-3">help</mat-icon>
+        Methodology
+      </a>
+      <a routerLink="/cve-search" routerLinkActive="active-link" href="/cve-search" mat-menu-item>
+        <mat-icon class="vertical-align-middle padding-bottom-3">search</mat-icon>
+        CVE Search
+      </a>
+      <a routerLink="/settings" routerLinkActive="active-link" href="/settings" mat-menu-item>
         <mat-icon class="vertical-align-middle padding-bottom-3">settings</mat-icon>
         Settings
       </a>
-      <a routerLink="/faq" routerLinkActive="mdc-list-item--selected" href="/faq" mat-list-item>
+      <a routerLink="/faq" routerLinkActive="active-link" href="/faq" mat-menu-item>
         <mat-icon class="vertical-align-middle padding-bottom-3">info</mat-icon>
         FAQ
       </a>
-      <a (click)="sidenav.toggle()" mat-list-item>
+      <button mat-menu-item (click)="goAbout()"><mat-icon class="vertical-align-middle padding-bottom-3">info</mat-icon> About</button>
+      <a (click)="sidenav.toggle()" mat-menu-item>
         <mat-icon>close</mat-icon> Close
       </a>
     </mat-nav-list>

@@ -3,8 +3,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { IndexeddbService } from '../indexeddb.service';
 import { UntypedFormControl } from '@angular/forms';
+import { SessionstorageserviceService } from "../sessionstorageservice.service"
 
 @Component({
+  standalone: false,
+  //imports: [],
   selector: 'app-dialog-apikey',
   templateUrl: './dialog-apikey.component.html',
   styleUrls: ['./dialog-apikey.component.scss']
@@ -16,11 +19,11 @@ export class DialogApikeyComponent implements OnInit {
   insertkeypass = new UntypedFormControl();
 
   constructor(public dialogRef: MatDialogRef<DialogApikeyComponent>,
-    @Inject(MAT_DIALOG_DATA) public data, private indexeddbService: IndexeddbService) { }
+    @Inject(MAT_DIALOG_DATA) public data, private indexeddbService: IndexeddbService, public sessionsub: SessionstorageserviceService) { }
 
   ngOnInit(): void {
     this.insertkeypass.setValue("");
-    if (sessionStorage.getItem('hidedialog') === 'true') {
+    if (this.sessionsub.getSessionStorageItem('hidedialog') === 'true') {
       this.removedialog = true;
     }
 
@@ -71,10 +74,10 @@ export class DialogApikeyComponent implements OnInit {
 
   removedialogFunc(event) {
     if (event.checked === true) {
-      sessionStorage.setItem('hidedialog', 'true');
+      this.sessionsub.setSessionStorageItem('hidedialog', 'true');
     }
     if (event.checked === false) {
-      sessionStorage.removeItem('hidedialog');
+      this.sessionsub.removeSessionStorageItem('hidedialog');
     }
   }
 }

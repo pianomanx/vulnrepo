@@ -12,15 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Node ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     - name: cmd add version
@@ -31,7 +31,7 @@ jobs:
           npm run build -- -c production
     
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.0.0
+      uses: actions/upload-artifact@v4
       with:
         name: deploy_dist
         path: dist
@@ -41,14 +41,14 @@ jobs:
     needs: build
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
           token: ${{ secrets.TOKEN }}
           
       - name: Download build
-        uses: actions/download-artifact@v3.0.0
+        uses: actions/download-artifact@v4
         with:
           name: deploy_dist
           path: .
@@ -56,17 +56,17 @@ jobs:
       - name: cmd run
         run: ls -la
       - name: Angular create 404.html
-        run: cd vulnrepo-app;cp index.html 404.html;ls -la
+        run: cd vulnrepo-app/browser;cp index.html 404.html;ls -la
         
       - name: Add CNAME
-        run: cd vulnrepo-app;echo "vulnrepo.com" > CNAME;ls -la
+        run: cd vulnrepo-app/browser;echo "vulnrepo.com" > CNAME;ls -la
         
       - name: Add README.md
-        run: cd vulnrepo-app;printf "# vulnrepo-build-prod\n\nAutomatic build of the https://github.com/kac89/vulnrepo application." > README.md
+        run: cd vulnrepo-app/browser;printf "# vulnrepo-build-prod\n\nAutomatic build of the https://github.com/kac89/vulnrepo application." > README.md
         
       - name: Commit build
         run: |
-          cd vulnrepo-app
+          cd vulnrepo-app/browser
           git init
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'kac89@users.noreply.github.com'

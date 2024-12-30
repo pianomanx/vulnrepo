@@ -6,7 +6,9 @@
         "severity": "Medium",
         "ref": "https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)\nhttps://en.wikipedia.org/wiki/Cross-site_scripting\nhttps://portswigger.net/web-security/cross-site-scripting/stored",
         "cvss": "4.3",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[XSS] Reflected cross-site scripting",
@@ -15,7 +17,9 @@
         "severity": "Medium",
         "ref": "https://portswigger.net/web-security/cross-site-scripting/reflected",
         "cvss": "4",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[XSS] DOM-based cross-site scripting",
@@ -24,7 +28,9 @@
         "severity": "Medium",
         "ref": "https://www.owasp.org/index.php/DOM_Based_XSS\nhttps://portswigger.net/web-security/cross-site-scripting/dom-based",
         "cvss": "4",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[XSS] Cross-site scripting (reflected DOM-based)",
@@ -33,7 +39,9 @@
         "severity": "Medium",
         "ref": "https://portswigger.net/kb/issues/00200311_cross-site-scripting-reflected-dom-based",
         "cvss": "4",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[XSS] Cross-site scripting (stored DOM-based)",
@@ -42,7 +50,9 @@
         "severity": "Medium",
         "ref": "https://portswigger.net/kb/issues/00200312_cross-site-scripting-stored-dom-based",
         "cvss": "4",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },    
     {
         "title": "[CSRF] Cross-site request forgery",
@@ -51,7 +61,9 @@
         "severity": "High",
         "ref": "http://cwe.mitre.org/data/definitions/352.html",
         "cvss": "6",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[SSRF] Server Side Request Forgery",
@@ -60,7 +72,9 @@
         "severity": "Medium",
         "ref": "http://www.acunetix.com/blog/articles/server-side-request-forgery-vulnerability/",
         "cvss": "4",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },	
     {
         "title": "Buffer Overflow",
@@ -69,7 +83,9 @@
         "severity": "Critical",
         "ref": "https://www.owasp.org/index.php/Buffer_Overflow",
         "cvss": "9",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[DoS] Denial of Service",
@@ -78,7 +94,9 @@
         "severity": "Low",
         "ref": "https://en.wikipedia.org/wiki/Denial-of-service_attack",
         "cvss": "3",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },	
     {
         "title": "[RFI] Remote File Inclusion",
@@ -87,7 +105,9 @@
         "severity": "High",
         "ref": "http://cwe.mitre.org/data/definitions/98.html",
         "cvss": "7",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "SQL Injection",
@@ -96,7 +116,9 @@
         "severity": "High",
         "ref": "https://www.owasp.org/index.php/SQL_Injection",
         "cvss": "8",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Blind SQL Injection",
@@ -105,7 +127,9 @@
         "severity": "High",
         "ref": "https://www.owasp.org/index.php/Blind_SQL_Injection",
         "cvss": "8",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Path Traversal",
@@ -114,7 +138,9 @@
         "severity": "Medium",
         "ref": "https://www.owasp.org/index.php/Path_Traversal\nhttp://projects.webappsec.org/w/page/13246952/Path Traversal\nhttp://cwe.mitre.org/data/definitions/22.html",
         "cvss": "4",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },	
     {
         "title": "[C/C++] Format String",
@@ -123,7 +149,9 @@
         "severity": "High",
         "ref": "https://en.wikipedia.org/wiki/Uncontrolled_format_string",
         "cvss": "6",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },	
     {
         "title": "Integer Overflows",
@@ -132,7 +160,9 @@
         "severity": "High",
         "ref": "http://projects.webappsec.org/w/page/13246926/Format String",
         "cvss": "6",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },	
     {
         "title": "[XXE] XML External Entities",
@@ -141,7 +171,9 @@
         "severity": "High",
         "ref": "http://www.securiteam.com/securitynews/6D0100A5PU.html\nhttps://www.owasp.org/index.php/XML_External_Entity_(XXE)_Processing",
         "cvss": "8",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },	
     {
         "title": "Insecure Indexing",
@@ -150,7 +182,9 @@
         "severity": "Info",
         "ref": "http://cwe.mitre.org/data/definitions/612.html",
         "cvss": "0",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "OpenSSL Heartbleed",
@@ -159,7 +193,9 @@
         "severity": "High",
         "ref": "http://heartbleed.com/",
         "cvss": "7.5",
-        "cve": "CVE-2014-0160"
+        "cvss_vector": "",
+        "cve": "CVE-2014-0160",
+        "tags": []
     },
     {
         "title": "Open Redirect Vulnerability",
@@ -168,7 +204,9 @@
         "severity": "Medium",
         "ref": "https://www.owasp.org/index.php/Unvalidated_Redirects_and_Forwards_Cheat_Sheet",
         "cvss": "4.1",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Server-Side Template Injection",
@@ -177,7 +215,9 @@
         "severity": "High",
         "ref": "http://blog.portswigger.net/2015/08/server-side-template-injection.html",
         "cvss": "7.5",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[RCE] Remote Code Execution",
@@ -186,7 +226,9 @@
         "severity": "Critical",
         "ref": "https://www.owasp.org/index.php/Code_Injection\nhttps://en.wikipedia.org/wiki/Arbitrary_code_execution",
         "cvss": "10",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "File Upload Vulnerability",
@@ -195,7 +237,9 @@
         "severity": "High",
         "ref": "https://cwe.mitre.org/data/definitions/434.html\nhttps://www.owasp.org/index.php/Unrestricted_File_Upload",
         "cvss": "6",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "OS command injection",
@@ -204,7 +248,9 @@
         "severity": "High",
         "ref": "https://portswigger.net/web-security/os-command-injection",
         "cvss": "8",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Cleartext submission of password",
@@ -213,7 +259,9 @@
         "severity": "Medium",
         "ref": "https://portswigger.net/kb/issues/00300100_cleartext-submission-of-password",
         "cvss": "5",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Credit card numbers disclosed",
@@ -222,7 +270,9 @@
         "severity": "Info",
         "ref": "https://portswigger.net/kb/issues/00600500_credit-card-numbers-disclosed\nhttps://cwe.mitre.org/data/definitions/200.html",
         "cvss": "0",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[HSTS] Strict transport security not enforced",
@@ -231,7 +281,9 @@
         "severity": "Low",
         "ref": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security\nhttps://moxie.org/software/sslstrip/\nhttps://hstspreload.org/\nhttps://cwe.mitre.org/data/definitions/523.html",
         "cvss": "3",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Unencrypted communications",
@@ -240,7 +292,9 @@
         "severity": "Low",
         "ref": "https://www.chromium.org/Home/chromium-security/marking-http-as-non-secure\nhttps://wiki.mozilla.org/Security/Server_Side_TLS\nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security",
         "cvss": "3",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Directory listing",
@@ -249,7 +303,9 @@
         "severity": "Low",
         "ref": "https://cwe.mitre.org/data/definitions/538.html\nhttps://cwe.mitre.org/data/definitions/548.html",
         "cvss": "1",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Source code disclosure",
@@ -258,7 +314,9 @@
         "severity": "Low",
         "ref": "https://cwe.mitre.org/data/definitions/18.html\nhttps://cwe.mitre.org/data/definitions/200.html\nhttps://cwe.mitre.org/data/definitions/388.html\nhttps://cwe.mitre.org/data/definitions/540.html\nhttps://cwe.mitre.org/data/definitions/541.html\nhttps://cwe.mitre.org/data/definitions/615.html",
         "cvss": "1",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "SSL Version 2 and 3 Protocol Detected",
@@ -267,7 +325,9 @@
         "severity": "Medium",
         "ref": "https://www.tenable.com/plugins/nessus/20007",
         "cvss": "4.3",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "TLS 1.0 / 1.1 Protocol Detected",
@@ -276,7 +336,9 @@
         "severity": "Low",
         "ref": "https://www.tenable.com/plugins/nessus/104743",
         "cvss": "1",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Subdomain takeover",
@@ -285,7 +347,9 @@
         "severity": "High",
         "ref": "https://www.hackerone.com/blog/Guide-Subdomain-Takeovers",
         "cvss": "7",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Improper Authentication",
@@ -294,7 +358,9 @@
         "severity": "Medium",
         "ref": "https://cwe.mitre.org/data/definitions/287.html",
         "cvss": "5",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Privilege Escalation",
@@ -303,7 +369,9 @@
         "severity": "High",
         "ref": "https://attack.mitre.org/tactics/TA0004/",
         "cvss": "7",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[IDOR] Insecure Direct Object Reference",
@@ -312,7 +380,9 @@
         "severity": "Medium",
         "ref": "https://wiki.owasp.org/index.php/Testing_for_Insecure_Direct_Object_References_(OTG-AUTHZ-004)\nhttps://portswigger.net/web-security/access-control/idor",
         "cvss": "5",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[Mobile] Insecure Logging",
@@ -321,7 +391,9 @@
         "severity": "High",
         "ref": "https://medium.com/mobile-penetration-testing/01-insecure-logging-a41c41a8e648",
         "cvss": "7",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[Mobile] Hard Coding Issues",
@@ -330,7 +402,9 @@
         "severity": "High",
         "ref": "https://medium.com/mobile-penetration-testing/02-hard-coding-issues-fa795c8294c4",
         "cvss": "7",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[Mobile] Access Control Issues",
@@ -339,7 +413,9 @@
         "severity": "High",
         "ref": "https://medium.com/mobile-penetration-testing/access-control-92e88578d8b6",
         "cvss": "7",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "[Mobile] Insecure Input Validation",
@@ -348,7 +424,9 @@
         "severity": "High",
         "ref": "https://medium.com/mobile-penetration-testing/13-insecure-input-validation-part-3-595b1439cd07",
         "cvss": "7",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Insecure Deserialization",
@@ -357,7 +435,9 @@
         "severity": "Medium",
         "ref": "https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A8-Insecure_Deserialization",
         "cvss": "5",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Frameable response (potential Clickjacking)",
@@ -366,7 +446,9 @@
         "severity": "Low",
         "ref": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options",
         "cvss": "1",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     },
     {
         "title": "Cookie without HttpOnly flag set",
@@ -375,6 +457,30 @@
         "severity": "Low",
         "ref": "https://portswigger.net/research/web-storage-the-lesser-evil-for-session-tokens#httponly",
         "cvss": "1",
-        "cve": ""
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
+    },
+    {
+        "title": "[FPD] Full Path Disclosure",
+        "poc": "",
+        "desc": "Full Path Disclosure (FPD) vulnerabilities enable the attacker to see the path to the webroot/file. e.g.: /home/omg/htdocs/file/. Certain vulnerabilities, such as using the load_file() (within a SQL Injection) query to view the page source, require the attacker to have the full path to the file they wish to view.",
+        "severity": "Low",
+        "ref": "https://owasp.org/www-community/attacks/Full_Path_Disclosure",
+        "cvss": "1",
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
+    },
+    {
+        "title": "PHP Unserialize Object Injection",
+        "poc": "",
+        "desc": "HP Object Injection is an application level vulnerability that could allow an attacker to perform different kinds of malicious attacks, such as Code Injection, SQL Injection, Path Traversal and Application Denial of Service, depending on the context. The vulnerability occurs when user-supplied input is not properly sanitized before being passed to the unserialize() PHP function. Since PHP allows object serialization, attackers could pass ad-hoc serialized strings to a vulnerable unserialize() call, resulting in an arbitrary PHP object(s) injection into the application scope.\n\nIn order to successfully exploit a PHP Object Injection vulnerability two conditions must be met:\n\nThe application must have a class which implements a PHP magic method (such as __wakeup or __destruct) that can be used to carry out malicious attacks, or to start a “POP chain”.\nAll of the classes used during the attack must be declared when the vulnerable unserialize() is being called, otherwise object autoloading must be supported for such classes.\n\n",
+        "severity": "High",
+        "ref": "https://owasp.org/www-community/vulnerabilities/PHP_Object_Injection",
+        "cvss": "8",
+        "cvss_vector": "",
+        "cve": "",
+        "tags": []
     }
 ]

@@ -5,7 +5,7 @@
 Check online: https://vulnrepo.com/
 
 Video walkthrough/Tutorial:  
-[![Guide](https://img.youtube.com/vi/k32Oo57ZQdY/0.jpg)](https://www.youtube.com/watch?v=k32Oo57ZQdY)
+[![Guide](https://img.youtube.com/vi/cW_kVPtUJbU/0.jpg)](https://www.youtube.com/watch?v=cW_kVPtUJbU)
 
 ## Features
 
@@ -14,9 +14,9 @@ Video walkthrough/Tutorial:
  - Use custom issues templates!
     - The use of templates greatly speeds up the work for pentester or security auditor. Import CVE, CWE, MITRE ATT&CK or PCI DSS data also possible.
  - Import issues from security scanners
-    - Supported import from: Nmap, Nessus, Burp, OpenVAS, Bugcrowd, Trivy. After importing, easily manage and edit vulnerabilities.
- - TXT & HTML & PDF
-    - You can download report in TXT, HTML formats!. Also encrypted version of HTML report! If you need PDF just 'print as PDF' html report.
+    - Supported import from: Nmap, Nessus, Burp, OpenVAS, Bugcrowd, Trivy, NPM, Semgrep, Composer. After importing, easily manage and edit vulnerabilities.
+ - TXT & HTML & DOCX & PDF
+    - You can download report in TXT, HTML, DOCX formats!. Also encrypted version of HTML report! If you need PDF just 'print as PDF' html report.
  - Attachments
     - You can easly attach any file you want to. Screenshot, movie or scanner output in txt. Automatically doing checksum sha256 of attached file.
  - Changelog
@@ -29,6 +29,9 @@ Video walkthrough/Tutorial:
     - Build your own backend system to store reports!
  - Report template customization
     - New version of HTML report allow easy template edit or CSS.
+ - Methodology
+    - Use the audit tool to make sure nothing is missing in the report when doing your research!
+
 
 ## Development server
 

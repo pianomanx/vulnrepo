@@ -3,6 +3,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntypedFormControl } from '@angular/forms';
 
 @Component({
+  standalone: false,
+  //imports: [],
   selector: 'app-dialog-customcontent',
   templateUrl: './dialog-customcontent.component.html',
   styleUrls: ['./dialog-customcontent.component.scss']
@@ -14,7 +16,14 @@ export class DialogCustomcontentComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<DialogCustomcontentComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {
-    this.report_custom_content.setValue(this.data.report_settings.report_html);
+
+
+    if(this.data.report_settings) {
+      this.report_custom_content.setValue(this.data.report_settings.report_html);
+    } else {
+      this.report_custom_content.setValue(this.data);
+    }
+
   }
 
   cancel(): void {

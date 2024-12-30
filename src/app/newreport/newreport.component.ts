@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { IndexeddbService } from '../indexeddb.service';
 import { SeckeyValidatorService } from '../seckey-validator.service';
 import { ThemePalette } from '@angular/material/core';
@@ -8,13 +8,20 @@ import { ApiService } from '../api.service';
 import { DialogApikeyComponent } from '../dialog-apikey/dialog-apikey.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntypedFormControl } from '@angular/forms';
+import { SessionstorageserviceService } from "../sessionstorageservice.service"
+import { UtilsService } from '../utils.service';
+import { MatTooltip } from '@angular/material/tooltip';
+import {Location} from '@angular/common';
 
 @Component({
+  standalone: false,
+  //imports: [],
   selector: 'app-newreport',
   templateUrl: './newreport.component.html',
   styleUrls: ['./newreport.component.scss']
 })
 export class NewreportComponent implements OnInit {
+  @ViewChild('tooltip') tooltip: MatTooltip;
   dialogRef: MatDialogRef<DialogApikeyComponent>;
   hide = true;
   localkeys = [];
@@ -39,14 +46,21 @@ export class NewreportComponent implements OnInit {
   profileSettingsselected: any;
   apireportprofiles = [];
   apireportprofilesList = [];
-  constructor(private indexeddbService: IndexeddbService, private passwordService: SeckeyValidatorService, private apiService: ApiService, public dialog: MatDialog,  
-    public router: Router) {
+  constructor(private _location: Location, private indexeddbService: IndexeddbService, private passwordService: SeckeyValidatorService, private apiService: ApiService, public dialog: MatDialog,  
+    public router: Router, public sessionsub: SessionstorageserviceService,private utilsService: UtilsService) {
 
     // get report profiles
     this.indexeddbService.retrieveReportProfile().then(ret => {
       if (ret) {
         this.ReportProfilesList = ret;
-    
+
+        if(this.ReportProfilesList.length === 1) {
+
+          this.selected_profilefin = this.ReportProfilesList[0].profile_name;
+          this.profileSettingsselected = this.ReportProfilesList[0];
+          this.selected_profile = this.ReportProfilesList[0];
+        }
+        
         this.getAllreportprofilesfromapi();
 
       }
@@ -56,7 +70,7 @@ export class NewreportComponent implements OnInit {
 
   ngOnInit() {
 
-    const localkey = sessionStorage.getItem('VULNREPO-API');
+    const localkey = this.sessionsub.getSessionStorageItem('VULNREPO-API');
     if (localkey) {
       this.localkeys = JSON.parse(localkey);
     }
@@ -65,8 +79,7 @@ export class NewreportComponent implements OnInit {
 
   getAllreportprofilesfromapi() {
   
-
-    const localkey = sessionStorage.getItem('VULNREPO-API');
+    const localkey = this.sessionsub.getSessionStorageItem('VULNREPO-API');
     if (localkey) {
       this.msg = 'API connection please wait...';
 
@@ -111,7 +124,7 @@ export class NewreportComponent implements OnInit {
         
         if (ret) {
 
-          if (sessionStorage.getItem('hidedialog') !== 'true') {
+          if (this.sessionsub.getSessionStorageItem('hidedialog') !== 'true') {
             setTimeout(_ => this.openDialog(ret));
           }
 
@@ -122,29 +135,11 @@ export class NewreportComponent implements OnInit {
   }
 
   generatePassword() {
-    const length = 20;
-    const string = 'abcdefghijklmnopqrstuvwxyz';
-    const numeric = '0123456789';
-    const punctuation = '!@#$%^&*()_+~`|}{[]\:;?><,./-=';
-    let password = '', character = '', ent1 = 0, ent2 = 0, ent3 = 0, hold = '', pass = '';
-    while ( password.length < length ) {
-        ent1 = Math.ceil(string.length * Math.random() * Math.random());
-        ent2 = Math.ceil(numeric.length * Math.random() * Math.random());
-        ent3 = Math.ceil(punctuation.length * Math.random() * Math.random());
-        hold = string.charAt( ent1 );
-        hold = (password.length % 2 === 0) ? (hold.toUpperCase()) : (hold);
-        character += hold;
-        character += numeric.charAt( ent2 );
-        character += punctuation.charAt( ent3 );
-        password = character;
-    }
-    password = password.split('').sort(function() {return 0.5 - Math.random(); }).join('');
-    pass = password.substr(0, length);
+    const pass = this.utilsService.generatePassword(256);
     // set gen pass
     this.pass1model.setValue(pass);
     this.pass2model.setValue(pass);
     this.passCheck(pass);
-    this.hide = false;
   }
 
   openDialog(data: any): void {
@@ -158,9 +153,9 @@ export class NewreportComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The security key dialog was closed');
       if (result) {
-        sessionStorage.setItem('VULNREPO-API', result);
+        this.sessionsub.setSessionStorageItem('VULNREPO-API', result);
         
-        const localkey = sessionStorage.getItem('VULNREPO-API');
+        const localkey = this.sessionsub.getSessionStorageItem('VULNREPO-API');
         if (localkey) {
           this.localkeys = JSON.parse(localkey);
         }
@@ -259,6 +254,21 @@ export class NewreportComponent implements OnInit {
       this.profileSettingsselected = event.value;
     }
 
+  }
+
+  copyText() {
+    setTimeout(() => {
+      this.tooltip.show();
+      this.tooltip.message = "Copied!";
+    });
+    setTimeout(() => {
+      this.tooltip.hide();
+      this.tooltip.message = "Copy to clipboard";
+    }, 2000);
+  }
+
+  cancel(): void {
+    this._location.back();
   }
 
 }

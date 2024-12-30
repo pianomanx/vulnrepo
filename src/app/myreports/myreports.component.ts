@@ -10,6 +10,7 @@ import { v4 as uuid } from 'uuid';
 import { DialogApikeyComponent } from '../dialog-apikey/dialog-apikey.component';
 import { ApiService } from '../api.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SessionstorageserviceService } from "../sessionstorageservice.service"
 
 export interface MyReportElement {
   select: any;
@@ -22,6 +23,8 @@ export interface MyReportElement {
 }
 
 @Component({
+  standalone: false,
+  //imports: [],
   selector: 'app-myreports',
   templateUrl: './myreports.component.html',
   styleUrls: ['./myreports.component.scss']
@@ -54,7 +57,7 @@ export class MyreportsComponent implements OnInit {
   }
 
   constructor(public dialog: MatDialog, private indexeddbService: IndexeddbService, private apiService: ApiService,
-    private snackBar: MatSnackBar) {
+    private snackBar: MatSnackBar, public sessionsub: SessionstorageserviceService) {
 
   }
 
@@ -77,16 +80,19 @@ export class MyreportsComponent implements OnInit {
 
   getAPIallreports() {
     this.apilist = [];
-    const localkey = sessionStorage.getItem('VULNREPO-API');
+    const localkey = this.sessionsub.getSessionStorageItem('VULNREPO-API');
+
     if (localkey) {
       this.msg = 'API connection please wait...';
 
       this.keyfound = true;
       const vaultobj = JSON.parse(localkey);
-
+      let x = 0;
       vaultobj.forEach( (element) => {
+        x=x+1;
 
         this.apilist.push({value: element.value, apikey: element.apikey, viewValue: element.viewValue});
+
         this.apiService.APISend(element.value, element.apikey, 'getreportslist', '').then(resp => {
 
           if (resp.length > 0) {
@@ -103,15 +109,16 @@ export class MyreportsComponent implements OnInit {
           this.dataSource.data = this.list;
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
-          this.msg = '';
         }).catch(() => {});
 
-
-        setTimeout(() => {
-          // console.log('hide progress timeout');
-          this.msg = '';
-        }, 10000);
-
+        //progress bar on api reports
+        if(vaultobj.length === x) {
+          setTimeout(() => {
+            // console.log('hide progress timeout');
+            this.msg = '';
+          }, 1000);
+        }
+        
     });
 
 
@@ -122,7 +129,7 @@ export class MyreportsComponent implements OnInit {
       this.indexeddbService.retrieveAPIkey().then(ret => {
         if (ret) {
 
-          if (sessionStorage.getItem('hidedialog') !== 'true') {
+          if (this.sessionsub.getSessionStorageItem('hidedialog') !== 'true') {
             setTimeout(_ => this.openDialog(ret));
           }
 
@@ -145,7 +152,7 @@ export class MyreportsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The security key dialog was closed');
       if (result) {
-        sessionStorage.setItem('VULNREPO-API', result);
+        this.sessionsub.setSessionStorageItem('VULNREPO-API', result);
         this.getAPIallreports();
       }
 
@@ -171,6 +178,8 @@ export class MyreportsComponent implements OnInit {
         this.indexeddbService.deleteReport(result).then(data => {
           if (data) {
             this.getallreports();
+            this.selection.clear();
+            this.sessionsub.removeSessionStorageItem(item.report_id);
           }
         });
 
@@ -180,6 +189,7 @@ export class MyreportsComponent implements OnInit {
             this.apiService.APISend(result.apiurl, result.apikey, 'removereport', 'reportid=' + result.report_id).then(resp => {
               if (resp.REMOVE_REPORT === 'OK') {
                 this.getallreports();
+                this.selection.clear()
               }
             });
 
@@ -222,9 +232,6 @@ export class MyreportsComponent implements OnInit {
   toAPIcloneReport(item, apiurl, apikey) {
 
     item.report_id = uuid();
-    item.api = 'remote';
-    item.apiurl = apiurl;
-    item.apikey = apikey;
 
       // tslint:disable-next-line:max-line-length
       this.apiService.APISend(apiurl, apikey, 'savereport', 'reportdata=' + btoa(JSON.stringify(item))).then(resp => {

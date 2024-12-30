@@ -4,8 +4,11 @@ import { UntypedFormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 
 @Component({
+  standalone: false,
+  //imports: [],
   selector: 'app-dialog-cve',
   templateUrl: './dialog-cve.component.html',
   styleUrls: ['./dialog-cve.component.scss']
@@ -34,7 +37,7 @@ export class DialogCveComponent implements OnInit, AfterViewInit {
 
 
   constructor(private apiService: ApiService,
-    public dialogRef: MatDialogRef<DialogCveComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+    public dialogRef: MatDialogRef<DialogCveComponent>, @Inject(MAT_DIALOG_DATA) public data: any,public router: Router,) {
         this.mycve.setValue(this.data.cve);
      }
 
@@ -56,17 +59,31 @@ export class DialogCveComponent implements OnInit, AfterViewInit {
 
           if (resp !== null && resp !== undefined) {
             // if everything OK
-            if (resp.id) {
-                this.results = resp;
-                this.show = false;
-                this.gbug = this.results.githubpoc;
-                
-                this.dataSource = new MatTableDataSource(this.gbug.items);
-                setTimeout(() => this.dataSource.paginator = this.paginator);
 
-                this.dataSource2 = new MatTableDataSource(this.results.references);
-                setTimeout(() => this.dataSource2.paginator = this.paginator2);
+            let githubcve = resp.githubcve;
+            let githubpoc = resp.githubpoc;
+
+            this.show = false;
+
+            if (githubpoc.total_count === 0 && Object.keys(githubcve).length === 0) {
+              this.show = false;
+              this.err_msg = 'CVE not found.';
+            } else {
+
+              this.results = [];
+              this.results.descriptions = githubcve.containers.cna.descriptions;
+              this.results.references = githubcve.containers.cna.references;
+              this.results.assigner = githubcve.cveMetadata.assignerShortName;
+              this.results.published = githubcve.cveMetadata.datePublished;
+              this.results.modified = githubcve.cveMetadata.dateUpdated;
+              
+              this.dataSource2 = new MatTableDataSource(this.results.references);
+              setTimeout(() => this.dataSource2.paginator = this.paginator2);
+
+              this.dataSource = new MatTableDataSource(githubpoc.items);
+              setTimeout(() => this.dataSource.paginator = this.paginator);
             }
+
 
             if (resp.error) {
               this.err_msg = resp.error;
@@ -95,5 +112,14 @@ export class DialogCveComponent implements OnInit, AfterViewInit {
     this.dialogRef.close(this.data);
   }
 
+  openInNewWindow() {
+    // Converts the route into a string that can be used 
+    // with the window.open() function
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree([`/cve-search`])
+    );
+  
+    window.open(url, '_blank');
+  }
 
 }
