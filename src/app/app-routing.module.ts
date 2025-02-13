@@ -9,6 +9,14 @@ import { NewreportComponent } from './newreport/newreport.component';
 import { ReportComponent } from './report/report.component';
 import { ImportReportComponent } from './import-report/import-report.component';
 import { TemplatesListComponent } from './templates-list/templates-list.component';
+import { DeactivateGuardService } from './deactivate-guard.service';
+import { AsvsComponent } from './asvs/asvs.component';
+import { TbhmComponent } from './tbhm/tbhm.component';
+import { Pcidss4Component } from './pcidss4/pcidss4.component';
+import { CveSearchComponent } from './cve-search/cve-search.component';
+
+import { BbListComponent } from './bb-list/bb-list.component';
+
 
 const routes: Routes = [{
   path: 'home',
@@ -31,9 +39,30 @@ const routes: Routes = [{
   component: NewreportComponent
 },
 {
+  path: 'asvs4',
+  pathMatch: 'full',
+  component: AsvsComponent
+},
+{
+  path: 'cve-search',
+  pathMatch: 'full',
+  component: CveSearchComponent
+},
+{
+  path: 'pcidss4',
+  pathMatch: 'full',
+  component: Pcidss4Component
+},
+{
+  path: 'tbhm',
+  pathMatch: 'full',
+  component: TbhmComponent
+},
+{
   path: 'report/:report_id',
   pathMatch: 'full',
-  component: ReportComponent
+  component: ReportComponent,
+  canDeactivate: [DeactivateGuardService]
 },
 {
   path: 'settings',
@@ -58,6 +87,11 @@ const routes: Routes = [{
   path: 'templates-list',
   pathMatch: 'full',
   component: TemplatesListComponent
+},
+{
+  path: 'bugbounty-list',
+  pathMatch: 'full',
+  component: BbListComponent
 },
 {
   path: '**',

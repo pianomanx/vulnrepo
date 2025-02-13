@@ -42,7 +42,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { IndexeddbService } from './indexeddb.service';
 import { MatChipsModule } from '@angular/material/chips';
 
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MatSelectModule } from '@angular/material/select';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DatePipe } from '@angular/common';
@@ -70,10 +70,24 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { DialogAddreportprofileComponent } from './dialog-addreportprofile/dialog-addreportprofile.component';
 import { DialogApierrorComponent } from './dialog-apierror/dialog-apierror.component';
 import { DialogReportcssComponent } from './dialog-reportcss/dialog-reportcss.component';
-import { NoSanitizePipe } from './nosanitizerpipe';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { AsvsComponent } from './asvs/asvs.component';
+import { DialogAsvs4Component } from './dialog-asvs4/dialog-asvs4.component';
+import { TbhmComponent } from './tbhm/tbhm.component';
+import { Pcidss4Component } from './pcidss4/pcidss4.component';
+import { DialogPcidss4Component } from './dialog-pcidss4/dialog-pcidss4.component';
+import { DialogAboutComponent } from './dialog-about/dialog-about.component';
+import { DialogIssuesEditComponent } from './dialog-issues-edit/dialog-issues-edit.component';
+import { DialogAddCustomTemplateComponent } from './dialog-add-custom-template/dialog-add-custom-template.component';
+import { DialogEncryptReportComponent } from './dialog-encrypt-report/dialog-encrypt-report.component';
+import {CdkAccordionModule} from '@angular/cdk/accordion';
+import { CveSearchComponent } from './cve-search/cve-search.component';
+import { DialogEditorFullscreenComponent } from './dialog-editor-fullscreen/dialog-editor-fullscreen.component';
+import { DialogAttachPreviewComponent } from './dialog-attach-preview/dialog-attach-preview.component';
+import { FilesizePipe } from './filesize.pipe';
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent,
         HomeComponent,
         MyreportsComponent,
@@ -99,10 +113,22 @@ import { NoSanitizePipe } from './nosanitizerpipe';
         DialogApierrorComponent,
         DialogReportcssComponent,
         TemplatesListComponent,
-        NoSanitizePipe
+        AsvsComponent,
+        DialogAsvs4Component,
+        TbhmComponent,
+        Pcidss4Component,
+        DialogPcidss4Component,
+        DialogAboutComponent,
+        DialogIssuesEditComponent,
+        DialogAddCustomTemplateComponent,
+        DialogEncryptReportComponent,
+        CveSearchComponent,
+        DialogEditorFullscreenComponent,
+        DialogAttachPreviewComponent,
+        FilesizePipe
     ],
-    imports: [
-        BrowserModule,
+    exports: [],
+    bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         MatButtonModule,
@@ -130,7 +156,6 @@ import { NoSanitizePipe } from './nosanitizerpipe';
         MatSlideToggleModule,
         MatChipsModule,
         MatSnackBarModule,
-        HttpClientModule,
         MatSelectModule,
         DragDropModule,
         MatTabsModule,
@@ -138,12 +163,10 @@ import { NoSanitizePipe } from './nosanitizerpipe';
         MatRadioModule,
         HammerModule,
         MatProgressBarModule,
-        NgxChartsModule
-    ],
-    providers: [MessageService, IndexeddbService, DatePipe],
-    exports: [],
-    bootstrap: [AppComponent]
-})
+        NgxChartsModule,
+        ClipboardModule,
+        MatTooltipModule,
+        CdkAccordionModule], providers: [MessageService, IndexeddbService, DatePipe, provideHttpClient(withInterceptorsFromDi())] })
 
 export class AppModule {
   // Diagnostic only: inspect router configuration

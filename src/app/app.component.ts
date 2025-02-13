@@ -3,34 +3,34 @@ import { IndexeddbService } from './indexeddb.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { version } from "../version";
+import { SessionstorageserviceService } from "./sessionstorageservice.service"
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogAboutComponent } from './dialog-about/dialog-about.component';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
 
 export class AppComponent implements OnInit, OnDestroy {
   show_status: any;
   enc_status: any;
   subscription: Subscription;
-  app_ver = '';
+  show_active_reports = false;
+  arr_oreports = [];
+  dialogRef: MatDialogRef<DialogAboutComponent>;
 
-  app_ver_short = '';
-
-  constructor(public route: ActivatedRoute, public router: Router, private indexeddbService: IndexeddbService) {
-    
+  constructor(public route: ActivatedRoute, public router: Router, public sessionsub: SessionstorageserviceService, private indexeddbService: IndexeddbService, public dialog: MatDialog) {
+    this.sessionsub.storageChange.subscribe(data => {
+      // console.log(data);
+      this.getopenreports();
+    });
   }
 
   ngOnInit() {
-    this.app_ver = version.number;
-    
-    if (this.app_ver !== ''){
-
-      this.app_ver_short = this.app_ver.substring(0, 7)
-
-    }
+    this.show_active_reports = false;
 
     const db = window.indexedDB.open('testindexeddb');
     db.onerror = () => {
@@ -59,11 +59,64 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.getopenreports();
   }
 
   ngOnDestroy() {
     // unsubscribe to ensure no memory leaks
     this.subscription.unsubscribe();
+  }
+
+  goAbout(): void {
+
+    const dialogRef = this.dialog.open(DialogAboutComponent, {
+      width: '500px',
+      disableClose: false,
+      data: []
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The CVSS dialog was closed');
+    });
+
+  }
+
+  getopenreports() {
+    this.arr_oreports = [];
+
+    for (const [report_id, value] of Object.entries(sessionStorage)) {
+
+      if (report_id !== 'VULNREPO-API') {
+        this.indexeddbService.checkifreportexist(report_id).then(data => {
+          if (data) {
+            this.show_active_reports = true;
+            this.arr_oreports.push({ "report_id": data.report_id, "report_name": data.report_name });
+          }
+
+          const localkey = this.sessionsub.getSessionStorageItem('VULNREPO-API');
+          if (localkey) {
+
+            const vaultobj = JSON.parse(localkey);
+            vaultobj.forEach((element) => {
+
+              this.indexeddbService.checkAPIreport_single(report_id, element.value, element.apikey).then(data => {
+                if (data) {
+                  this.show_active_reports = true;
+                  this.arr_oreports.push({ "report_id": data.report_id, "report_name": data.report_name, "report_source": 'api' });
+                }
+              });
+
+            });
+
+          }
+
+        });
+      }
+
+    };
+
+    this.arr_oreports = [...this.arr_oreports.reduce((map, obj) => map.set(obj.report_id, obj), new Map()).values()];
+
   }
 
 }

@@ -15,12 +15,15 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/vulnrepo-app",
+            "outputPath": {
+              "base": "dist/vulnrepo-app"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.png",
@@ -36,22 +39,21 @@
               "src/styles.scss"
             ],
             "allowedCommonJsDependencies": [
-              "chart.js",
               "dompurify",
               "crypto-js",
               "js-sha256",
               "uuid",
               "xml2js",
               "rxjs-compat/Subject",
-              "rxjs/Subject"
+              "rxjs/Subject",
+              "rfdc"
            ],
             "scripts": [],
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -66,8 +68,6 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -86,18 +86,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "vulnrepo-app:build"
+            "buildTarget": "vulnrepo-app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "vulnrepo-app:build:production"
+              "buildTarget": "vulnrepo-app:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "vulnrepo-app:build"
+            "buildTarget": "vulnrepo-app:build"
           }
         },
         "test": {
@@ -144,5 +144,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
